@@ -2,23 +2,55 @@
 
 namespace core;
 
+/**
+ * Реализует паттерн проектирования Active Record
+ * Класс, содержащий стандартные функции для работы с записями из БД. Для создания класса для работы с БД
+ * необходимо отнаследоваться от данного класса. Каждый экземпляр наследника данного класса представляет собой модель,
+ * соответствующий одной записи в таблице БД, для реализации паттерна MVC. В классе-наследнике необходимо создать поля,
+ * соответствующие аттрибутам таблицы БД, с которой будет работать модель, а также функцию конструктор класса, где
+ * принимать в качестве параметров значения этих полей и присваивать эти параметры полям класса.
+ *
+ * Class ActiveRecord
+ * @package core
+ */
+
 
 abstract class ActiveRecord
 {
+    /**
+     * Поле должно содержать название таблицы БД
+     * @var string
+     */
     public static string $tableName;
 
-
-    public function getTableName()
+    /**
+     * Функция возвращает название таблицы БД, с которой работает модель
+     * @return string
+     */
+    public function getTableName(): string
     {
         return static::$tableName;
     }
 
-    abstract public function getPrimaryKeyName();
+    /**
+     * Функция вовзращает имя ключевого поля записи таблицы БД, с которой работает модель
+     * @return string
+     */
+    abstract public function getPrimaryKeyName(): string;
 
+    /**
+     * Функция возвращает значение ключеого поля записи таблицы БД, с которой работает модель
+     * @return mixed
+     */
     abstract public function getPrimaryKeyValue();
 
-
-    public function findRecord(SqlRequestParams $params)
+    /**
+     * Функция ищет запись таблицы БД в соответствии с принятыми параметрами и заполняет модель значениями найденной
+     * записи. Вовзращает true, если запись найдена, и false, если найти запись не удалось.
+     * @param SqlRequestParams $params
+     * @return bool
+     */
+    public function findRecord(SqlRequestParams $params): bool
     {
         $tb = static::$tableName;
 
@@ -41,6 +73,11 @@ abstract class ActiveRecord
         }
     }
 
+    /**
+     * Функция сохраняет в таблице БД полученные данные. В зависимости от принятого параметра либо сохраняет новую запись
+     * в таблице, либо обновляет данные в ней.
+     * @param bool $isNewRecord
+     */
     public function saveRecord($isNewRecord = true)
     {
         $tb = static::$tableName;
@@ -79,21 +116,21 @@ abstract class ActiveRecord
         }
     }
 
+    /**
+     * Функция удаляет запись из таблицы БД
+     */
     public function deleteRecord() {
         $tb = static::$tableName;
 
-        $whereRequestPart = '';
-        foreach ($this as $columnName => $columnValue) {
-            $whereRequestPart = $whereRequestPart . $columnName . ' = "' . $columnValue . '" AND ';
-        }
-        $whereRequestPart = trim($whereRequestPart, ' AND ');
-
         App::$pdo->query("
             DELETE FROM $tb
-            WHERE $whereRequestPart
+            WHERE {$this->getPrimaryKeyName()} = '{$this->getPrimaryKeyValue()}'
             ");
     }
 
+    /**
+     * Функция ищет запись в БД по первичному ключу
+     */
     public function findRecordByPrimaryKey($id) {
         $sqlParams = new SqlRequestParams();
         $sqlParams->where = "{$this->getPrimaryKeyName()} = '$id'";

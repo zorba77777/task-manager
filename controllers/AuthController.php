@@ -62,7 +62,7 @@ class AuthController extends Controller
         $login = App::$request->getParam('login');
 
         $user = new User();
-        $user->login = $login;
+        $user->login = $login ?? '';
 
         if (!$user->hasLoginAlreadyExist()) {
             echo 'login does not exist';
@@ -76,8 +76,8 @@ class AuthController extends Controller
         $password = App::$request->getParam('password');
 
         $user = new User();
-        $user->login = $login;
-        $user->password = $password;
+        $user->login = $login ?? '';
+        $user->password = $password ?? '';
 
         if ($user->isPasswordCorrect()) {
             echo 'correct';

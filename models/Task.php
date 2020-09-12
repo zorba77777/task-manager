@@ -4,7 +4,6 @@
 namespace models;
 
 use core\ActiveRecord;
-use core\SqlRequestParams;
 
 class Task extends ActiveRecord
 {
@@ -32,7 +31,7 @@ class Task extends ActiveRecord
         $this->editedByAdmin = $editedByAdmin;
     }
 
-    public function getPrimaryKeyName()
+    public function getPrimaryKeyName(): string
     {
         return 'taskId';
     }

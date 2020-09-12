@@ -4,11 +4,28 @@ namespace core;
 
 use core\SqlRequestParams;
 
+/**
+ * Класс реализует паттерн Repository.
+ * Его наследники позволяют производить поиск сразу нескольких моделей по заданным критериям. Каждый наследник должен
+ * соответствовать одной таблице в БД.
+ *
+ * Class Repository
+ * @package core
+ */
 abstract class Repository
 {
+    /**
+     * Содержит модель, которая будет использована для поиска записей в в БД.
+     * @var ActiveRecord
+     */
     protected ActiveRecord $model;
 
-    public function find(SqlRequestParams $params)
+    /**
+     * Функция ищет и возвращает массив моделей заданным параметрам.
+     * @param \core\SqlRequestParams $params
+     * @return array
+     */
+    public function find(SqlRequestParams $params): array
     {
         $query = "SELECT * FROM {$this->model->getTableName()}";
 
@@ -35,6 +52,10 @@ abstract class Repository
         } else {
             return [];
         }
+    }
 
+    public function findAll()
+    {
+        return $this->find(new SqlRequestParams());
     }
 }

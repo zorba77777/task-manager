@@ -37,7 +37,7 @@ class MainController extends Controller
         $user = '';
         if (App::$session->get('login')) {
             $user = new User();
-            $user->login = App::$session->get('login');
+            $user->login = App::$session->get('login') ?? '';
             $user->findUserByLogin();
         }
 
@@ -50,9 +50,9 @@ class MainController extends Controller
     public function create()
     {
         $task = new Task();
-        $task->userName = App::$request->getParam('user-name');
-        $task->email = App::$request->getParam('email');
-        $task->content = App::$request->getParam('task-text-new');
+        $task->userName = App::$request->getParam('user-name') ?? '';
+        $task->email = App::$request->getParam('email') ?? '';
+        $task->content = App::$request->getParam('task-text-new') ?? '';
         $task->saveRecord();
 
         setcookie('task_just_created', true, time() + (86400 * 30), "/");
@@ -68,7 +68,7 @@ class MainController extends Controller
 
             $task = new Task();
             $task->findRecordByPrimaryKey($id);
-            $task->done = $done;
+            $task->done = $done ?? '';
             $task->saveRecord(false);
 
             echo 'success';
@@ -85,7 +85,7 @@ class MainController extends Controller
 
             $task = new Task();
             $task->findRecordByPrimaryKey($id);
-            $task->content = $content;
+            $task->content = $content ?? '';
             $task->editedByAdmin = 1;
             $task->saveRecord(false);
 

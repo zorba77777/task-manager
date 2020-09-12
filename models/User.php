@@ -4,10 +4,9 @@ namespace models;
 
 use core\ActiveRecord;
 use core\App;
-use core\IdentityInterface;
 use core\SqlRequestParams;
 
-class User extends ActiveRecord implements IdentityInterface
+class User extends ActiveRecord
 {
     public static string $tableName = 'users';
 
@@ -28,7 +27,7 @@ class User extends ActiveRecord implements IdentityInterface
         $this->email = $email;
     }
 
-    public function getPrimaryKeyName()
+    public function getPrimaryKeyName(): string
     {
         return "userId";
     }
